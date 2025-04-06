@@ -1,37 +1,52 @@
 package speed.start.logical
 
+import java.util.ArrayList
+import java.util.Vector
+
 class ZigZagConversion {
-    fun convert(s: String, numRows: Int): String {
-        if (s.isEmpty() || numRows <= 0) {
-            return ""
-        }
-        if (numRows == 1) {
-            return s
-        }
+    companion object{
+        fun convert(s: String, numRows: Int): String {
+            if (s.isEmpty() || numRows <= 0) {
+                return ""
+            }
+            if (numRows == 1) {
+                return s
+            }
 
-        val result: StringBuilder = StringBuilder()
-        val stepC: Int = 2 * numRows - 2  // This is the full cycle length
+            val len: Int = s.length
+            val zigzagList = ArrayList<String>(numRows) // Create a list of numRows empty strings
+            for (i in 0..<numRows) {
+                zigzagList.add("") // Initialize each row as an empty string
+            }
 
-        // Loop through each row
-        for (i in 0..<numRows) {
-            // Loop through the string with the calculated step size
-            var j = i
-            while (j < s.length) {
-                result.append(s[j])  // Add the character in the current row
+            var pointer = 0
+            var isPositiveDirection = true
 
-                // If it's not the first or last row, we also need to add the diagonal character
-                if (i != 0 && i != numRows - 1) {
-                    val diagonalIndex = j + stepC - 2 * i
-                    if (diagonalIndex < s.length) {
-                        result.append(s[diagonalIndex])  // Add diagonal character
+            for (i in 0..<len) {
+                // Add the current character to the appropriate row (pointer)
+                zigzagList[pointer] += s[i]
+
+                // Change direction when we hit the top or bottom row
+                if (isPositiveDirection) {
+                    if (pointer == numRows - 1) {
+                        isPositiveDirection = false
+                        pointer--  // Move up
+                    } else {
+                        pointer++  // Move down
+                    }
+                } else {
+                    if (pointer == 0) {
+                        isPositiveDirection = true
+                        pointer++  // Move down
+                    } else {
+                        pointer--  // Move up
                     }
                 }
-
-                // Move to the next character in the current cycle
-                j += stepC
             }
+
+            // Concatenate all the rows to form the final zigzag string
+            return zigzagList.joinToString("")
         }
-        return result.toString()
     }
 
 }
